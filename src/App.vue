@@ -4,19 +4,19 @@
       <h2>iAlert Admin</h2>
       <ul>
         <li>
-          <router-link to="/" active-class="active" exact>🏠 Home (Dashboard)</router-link>
+          <router-link to="/" active-class="active" exact>Home (Dashboard)</router-link>
         </li>
         <li>
-          <router-link to="/incidents" active-class="active">🚨 Incident Reports</router-link>
+          <router-link to="/incidents" active-class="active">Incident Reports</router-link>
         </li>
         <li>
-          <router-link to="/map" active-class="active">🗺️ Live Map</router-link>
+          <router-link to="/map" active-class="active">Live Map</router-link>
         </li>
         <li>
-          <router-link to="/users" active-class="active">👥 Users</router-link>
+          <router-link to="/users" active-class="active">Users</router-link>
         </li>
         <li>
-          <router-link to="/logs" active-class="active">📜 Logs</router-link>
+          <router-link to="/logs" active-class="active">Logs</router-link>
         </li>
       </ul>
     </div>
@@ -85,7 +85,7 @@
 /* Main content */
 .main-content {
   flex: 1;
-  padding: 30px;
+  /* padding: 30px; */
   background-color: #f4f4f4;
   overflow-y: auto;
 }

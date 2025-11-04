@@ -1,163 +1,287 @@
 <template>
-  <div class="incident-page">
-    <h1 class="page-title">📊 Incident Reports Dashboard</h1>
-    <p class="subtitle">Overview of ongoing and past emergency incidents</p>
+  <div class="container-fluid py-4">
+    <!-- Page Title -->
+    <div class="mb-4">
+      <h2 class="fw-bold">iAlert Admin Dashboard</h2>
+      <p class="text-muted">Monitor incidents, responders, and system activity</p>
+    </div>
 
-    <!-- 📦 Top Stat Widgets -->
-    <div class="stats-grid">
-      <div class="stat-card total">
-        <h2>{{ totalIncidents }}</h2>
-        <p>Total Incidents</p>
-      </div>
-      <div class="stat-card active">
-        <h2>{{ activeIncidents }}</h2>
-        <p>Active Incidents</p>
-      </div>
-      <div class="stat-card resolved">
-        <h2>{{ resolvedIncidents }}</h2>
-        <p>Resolved Incidents</p>
-      </div>
-      <div class="stat-card responders">
-        <h2>{{ availableResponders }}</h2>
-        <p>Available Responders</p>
+    <!-- Summary Cards -->
+    <div class="row g-3 mb-4">
+      <div class="col-md-2 col-sm-6" v-for="(card, index) in summaryCards" :key="index">
+        <div class="card text-center shadow-sm border-0">
+          <div class="card-body">
+            <h6 class="text-uppercase fw-bold text-muted small">{{ card.title }}</h6>
+            <h3 class="fw-bold text-primary">{{ card.value }}</h3>
+          </div>
+        </div>
       </div>
     </div>
 
-    <!-- 📈 Recent Incidents Table -->
-    <div class="recent-table">
-      <h3>🕒 Recent Incident Reports</h3>
-      <table>
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>Description</th>
-            <th>Location</th>
-            <th>Status</th>
-            <th>Reported At</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="incident in recentIncidents" :key="incident.id">
-            <td>{{ incident.id }}</td>
-            <td>{{ incident.description }}</td>
-            <td>{{ incident.location }}</td>
-            <td>
-              <span :class="['status', incident.status.toLowerCase()]">{{ incident.status }}</span>
-            </td>
-            <td>{{ incident.date }}</td>
-          </tr>
-        </tbody>
-      </table>
+    <!-- Map and Charts -->
+    <div class="row mb-4">
+      <!-- Map Placeholder -->
+      <div class="col-lg-8 mb-3">
+        <div class="card shadow-sm border-0 h-100">
+          <div class="card-header bg-primary text-white fw-bold">Incident Map</div>
+          <div class="card-body">
+            <div class="bg-light border rounded d-flex align-items-center justify-content-center" style="height: 350px;">
+              <div id="incidentMap" style="height: 350px; border-radius: 10px;"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Charts -->
+      <div class="col-lg-4">
+        <div class="card shadow-sm border-0 mb-3">
+          <div class="card-header bg-success text-white fw-bold">Incident Priority Breakdown</div>
+          <div class="card-body">
+            <div class="bg-light border rounded d-flex align-items-center justify-content-center" style="height: 160px;">
+              <span class="text-muted">[Pie Chart Placeholder]</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="card shadow-sm border-0">
+          <div class="card-header bg-warning text-dark fw-bold">Reports Over Time</div>
+          <div class="card-body">
+            <div class="bg-light border rounded d-flex align-items-center justify-content-center" style="height: 160px;">
+              <span class="text-muted">[Line Chart Placeholder]</span>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
+
+    <!-- Recent Incidents Table -->
+    <div class="card shadow-sm border-0 mb-4">
+      <div class="card-header bg-dark text-white fw-bold">Recent Incident Reports</div>
+      <div class="card-body table-responsive">
+        <table class="table table-hover align-middle">
+          <thead class="table-secondary">
+            <tr>
+              <th>ID</th>
+              <th>Reporter</th>
+              <th>Type</th>
+              <th>Priority</th>
+              <th>Status</th>
+              <th>Date</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="incident in paginatedIncidents" :key="incident.id">
+              <td>{{ incident.id }}</td>
+              <td>{{ incident.reporter }}</td>
+              <td>{{ incident.type }}</td>
+              <td>
+                <span :class="priorityClass(incident.priority)" class="badge">{{ incident.priority }}</span>
+              </td>
+              <td>
+                <span :class="statusClass(incident.status)" class="badge">{{ incident.status }}</span>
+              </td>
+              <td>{{ incident.date }}</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <!-- Pagination -->
+        <nav>
+          <ul class="pagination justify-content-end">
+            <li class="page-item" :class="{ disabled: incidentPage === 1 }">
+              <button class="page-link" @click="incidentPage--" :disabled="incidentPage === 1">Previous</button>
+            </li>
+            <li class="page-item" v-for="page in totalIncidentPages" :key="page" :class="{ active: page === incidentPage }">
+              <button class="page-link" @click="incidentPage = page">{{ page }}</button>
+            </li>
+            <li class="page-item" :class="{ disabled: incidentPage === totalIncidentPages }">
+              <button class="page-link" @click="incidentPage++" :disabled="incidentPage === totalIncidentPages">Next</button>
+            </li>
+          </ul>
+        </nav>
+      </div>
+    </div>
+
+    <!-- Responders & Notifications -->
+    <div class="row">
+      <!-- Responders -->
+      <div class="col-md-6 mb-3">
+        <div class="card shadow-sm border-0">
+          <div class="card-header bg-info text-white fw-bold">Active Responders</div>
+          <div class="card-body table-responsive">
+            <table class="table table-striped align-middle">
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Role</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="responder in paginatedResponders" :key="responder.name">
+                  <td>{{ responder.name }}</td>
+                  <td>{{ responder.role }}</td>
+                  <td>
+                    <span :class="responderStatus(responder.status)" class="badge">{{ responder.status }}</span>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+
+            <!-- Pagination -->
+            <nav>
+              <ul class="pagination justify-content-end">
+                <li class="page-item" :class="{ disabled: responderPage === 1 }">
+                  <button class="page-link" @click="responderPage--" :disabled="responderPage === 1">Previous</button>
+                </li>
+                <li class="page-item" v-for="page in totalResponderPages" :key="page" :class="{ active: page === responderPage }">
+                  <button class="page-link" @click="responderPage = page">{{ page }}</button>
+                </li>
+                <li class="page-item" :class="{ disabled: responderPage === totalResponderPages }">
+                  <button class="page-link" @click="responderPage++" :disabled="responderPage === totalResponderPages">Next</button>
+                </li>
+              </ul>
+            </nav>
+          </div>
+        </div>
+      </div>
+
+      <!-- Notifications -->
+      <div class="col-md-6">
+        <div class="card shadow-sm border-0">
+          <div class="card-header bg-danger text-white fw-bold">Recent Notifications</div>
+          <div class="card-body">
+            <ul class="list-group list-group-flush">
+              <li v-for="notif in paginatedNotifications" :key="notif.message" class="list-group-item">
+                🔔 {{ notif.message }}
+                <small class="text-muted float-end">{{ notif.time }}</small>
+              </li>
+            </ul>
+
+            <!-- Pagination -->
+            <nav>
+              <ul class="pagination justify-content-end mt-2">
+                <li class="page-item" :class="{ disabled: notifPage === 1 }">
+                  <button class="page-link" @click="notifPage--" :disabled="notifPage === 1">Previous</button>
+                </li>
+                <li class="page-item" v-for="page in totalNotifPages" :key="page" :class="{ active: page === notifPage }">
+                  <button class="page-link" @click="notifPage = page">{{ page }}</button>
+                </li>
+                <li class="page-item" :class="{ disabled: notifPage === totalNotifPages }">
+                  <button class="page-link" @click="notifPage++" :disabled="notifPage === totalNotifPages">Next</button>
+                </li>
+              </ul>
+            </nav>
+          </div>
+        </div>
+      </div>
+    </div>
+
   </div>
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
+import { onMounted } from 'vue'
+import L from 'leaflet'
+import 'leaflet/dist/leaflet.css'
 
-// Mock data (replace with API calls later)
-const totalIncidents = ref(125)
-const activeIncidents = ref(8)
-const resolvedIncidents = ref(110)
-const availableResponders = ref(15)
+onMounted(() => {
+  // Create map centered on a default location (Isabela State University, for example)
+  const map = L.map('incidentMap').setView([16.929, 121.769], 15)
 
-const recentIncidents = ref([
-  { id: 1, description: 'Fire at Barangay 5', location: 'Santiago City', status: 'Active', date: 'Nov 3, 2025' },
-  { id: 2, description: 'Road Accident', location: 'Roxas, Isabela', status: 'Resolved', date: 'Nov 2, 2025' },
-  { id: 3, description: 'Flooded Area', location: 'Cauayan City', status: 'Active', date: 'Nov 2, 2025' },
-  { id: 4, description: 'Medical Emergency', location: 'Ilagan City', status: 'Resolved', date: 'Nov 1, 2025' }
+  // Add OpenStreetMap tile layer
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 19,
+    attribution: '© OpenStreetMap contributors'
+  }).addTo(map)
+
+  // Example marker
+  const marker = L.marker([16.929, 121.769]).addTo(map)
+  marker.bindPopup('<b>Sample Incident</b><br>CCSICT Area').openPopup()
+})
+
+// === Summary ===
+const summaryCards = ref([
+  { title: 'Total Reports', value: 245 },
+  { title: 'Pending', value: 37 },
+  { title: 'Resolved', value: 198 },
+  { title: 'Severe', value: 12 },
+  { title: 'Active Responders', value: 8 },
 ])
+
+// === Incident Reports ===
+const recentIncidents = ref([
+  { id: 101, reporter: 'John Dela Cruz', type: 'Fire', priority: 'Severe', status: 'Pending', date: '2025-11-01' },
+  { id: 102, reporter: 'Maria Reyes', type: 'Flood', priority: 'Moderate', status: 'Resolved', date: '2025-10-30' },
+])
+
+const incidentPage = ref(1)
+const itemsPerPage = 2
+const totalIncidentPages = computed(() => Math.ceil(recentIncidents.value.length / itemsPerPage))
+const paginatedIncidents = computed(() => {
+  const start = (incidentPage.value - 1) * itemsPerPage
+  return recentIncidents.value.slice(start, start + itemsPerPage)
+})
+
+// === Responders ===
+const responders = ref([
+  { name: 'Officer Santos', role: 'Fire Responder', status: 'Available' },
+  { name: 'Staff Lopez', role: 'Medical', status: 'Busy' },
+])
+
+const responderPage = ref(1)
+const totalResponderPages = computed(() => Math.ceil(responders.value.length / itemsPerPage))
+const paginatedResponders = computed(() => {
+  const start = (responderPage.value - 1) * itemsPerPage
+  return responders.value.slice(start, start + itemsPerPage)
+})
+
+// === Notifications ===
+const notifications = ref([
+  { message: 'New severe fire reported near Main Building.', time: '2m ago' },
+  { message: 'Incident #102 has been resolved by Team B.', time: '15m ago' },
+])
+
+const notifPage = ref(1)
+const totalNotifPages = computed(() => Math.ceil(notifications.value.length / itemsPerPage))
+const paginatedNotifications = computed(() => {
+  const start = (notifPage.value - 1) * itemsPerPage
+  return notifications.value.slice(start, start + itemsPerPage)
+})
+
+// === Styling Helpers ===
+const priorityClass = (priority) => ({
+  'bg-danger': priority === 'Severe',
+  'bg-warning': priority === 'Moderate',
+  'bg-success': priority === 'Mild'
+})
+
+const statusClass = (status) => ({
+  'bg-secondary': status === 'Pending',
+  'bg-primary': status === 'In Progress',
+  'bg-success': status === 'Resolved'
+})
+
+const responderStatus = (status) => ({
+  'bg-success': status === 'Available',
+  'bg-danger': status === 'Busy',
+  'bg-warning': status === 'En Route'
+})
 </script>
 
 <style scoped>
-.incident-page {
-  padding: 30px;
-  background-color: #f5f6fa;
-  font-family: "Segoe UI", sans-serif;
+.card {
+  border-radius: 10px;
 }
-
-.page-title {
-  font-size: 26px;
-  margin-bottom: 5px;
+.badge {
+  font-size: 0.8rem;
 }
-
-.subtitle {
-  color: #666;
-  margin-bottom: 25px;
+.page-link {
+  cursor: pointer;
 }
-
-/* ===== STAT CARDS ===== */
-.stats-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 20px;
-  margin-bottom: 40px;
-}
-
-.stat-card {
-  background: white;
-  padding: 25px;
-  border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  text-align: center;
-}
-
-.stat-card h2 {
-  font-size: 32px;
-  margin: 0;
-}
-
-.stat-card p {
-  color: #666;
-  margin: 8px 0 0;
-}
-
-.stat-card.total { border-left: 6px solid #3498db; }
-.stat-card.active { border-left: 6px solid #e67e22; }
-.stat-card.resolved { border-left: 6px solid #2ecc71; }
-.stat-card.responders { border-left: 6px solid #9b59b6; }
-
-/* ===== TABLE ===== */
-.recent-table {
-  background: white;
-  border-radius: 12px;
-  padding: 20px;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
-}
-
-.recent-table h3 {
-  margin-bottom: 15px;
-  color: #2c3e50;
-}
-
-table {
+#incidentMap {
   width: 100%;
-  border-collapse: collapse;
+  z-index: 0;
 }
-
-thead {
-  background-color: #2c3e50;
-  color: white;
-}
-
-th, td {
-  padding: 12px 15px;
-  text-align: left;
-}
-
-tbody tr:nth-child(even) {
-  background-color: #f9f9f9;
-}
-
-/* ===== STATUS TAGS ===== */
-.status {
-  padding: 5px 10px;
-  border-radius: 8px;
-  font-weight: bold;
-  color: white;
-}
-
-.status.active { background-color: #e67e22; }
-.status.resolved { background-color: #2ecc71; }
-.status.pending { background-color: #f39c12; }
 </style>
