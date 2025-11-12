@@ -44,7 +44,7 @@
   background-color: #2c2f33;
   color: white;
   padding: 20px;
-  border-radius: 30px;
+
   margin-right: 10px;
 }
 
