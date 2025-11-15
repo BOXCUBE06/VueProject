@@ -1,7 +1,7 @@
 <template>
   <div class="incident-page">
     <h1>Incident Reports</h1>
-    <p>This is the Incident Reports page.</p>
+    <p>Notifications.</p>
   </div>
 </template>
 

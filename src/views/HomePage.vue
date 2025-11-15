@@ -8,7 +8,7 @@
 
     <!-- Summary Cards -->
     <div class="row g-3 mb-4">
-      <div class="col-md-2 col-sm-6" v-for="(card, index) in summaryCards" :key="index">
+      <div class="col-md-3 col-sm-6" v-for="(card, index) in summaryCards" :key="index">
         <div class="card text-center shadow-sm border-0">
           <div class="card-body">
             <h6 class="text-uppercase fw-bold text-muted small">{{ card.title }}</h6>
@@ -18,33 +18,58 @@
       </div>
     </div>
 
-    <!-- Charts -->
-<div class="row g-3 mb-4">
-  <!-- Pie Chart -->
-  <div class="col-lg-4 col-md-12">
-    <div class="card shadow-sm border-0 h-100 d-flex flex-column align-items-center justify-content-center">
-      <div class="card-header bg-success text-white fw-bold w-100 text-center">
-        Incident Priority Breakdown
+    <!-- Map and Calendar -->
+    <div class="row g-3 mb-4">
+      <!-- Live Map -->
+      <div class="col-lg-7">
+        <div class="card shadow-sm border-0 h-100">
+          <div class="card-header bg-primary text-white fw-bold">Live Incident Map</div>
+          <div class="card-body p-0">
+            <div ref="mapContainer" style="height: 400px; width: 100%;"></div>
+          </div>
+        </div>
       </div>
-      <div class="card-body d-flex justify-content-center align-items-center">
-        <canvas id="priorityChart" style="max-width: 320px; max-height: 220px;"></canvas>
-      </div>
-    </div>
-  </div>
 
-  <!-- Line Chart -->
-  <div class="col-lg-8 col-md-12">
-    <div class="card shadow-sm border-0 h-100">
-      <div class="card-header bg-warning text-dark fw-bold w-100 text-center">
-        Reports Over Time
-      </div>
-      <div class="card-body">
-        <canvas id="reportsChart" style="max-height: 320px;"></canvas>
-      </div>
+      <!-- Calendar -->
+      <div class="col-lg-5">
+  <div class="card shadow-sm border-0 h-100 d-flex flex-column">
+    <div class="card-header bg-secondary text-white fw-bold">Event Calendar</div>
+    <div class="card-body flex-fill d-flex p-0">
+      <VCalendar class="flex-fill" style="width: 100%; height: 100%;" />
     </div>
   </div>
 </div>
 
+
+
+    </div>
+
+    <!-- Charts -->
+    <div class="row g-3 mb-4">
+      <!-- Pie Chart -->
+      <div class="col-lg-4 col-md-12">
+        <div class="card shadow-sm border-0 h-100 d-flex flex-column align-items-center justify-content-center">
+          <div class="card-header bg-success text-white fw-bold w-100 text-center">
+            Incident Priority Breakdown
+          </div>
+          <div class="card-body d-flex justify-content-center align-items-center">
+            <canvas ref="priorityChart" style="max-width: 320px; max-height: 220px;"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <!-- Line Chart -->
+      <div class="col-lg-8 col-md-12">
+        <div class="card shadow-sm border-0 h-100">
+          <div class="card-header bg-warning text-dark fw-bold w-100 text-center">
+            Reports Over Time
+          </div>
+          <div class="card-body">
+            <canvas ref="reportsChart" style="max-height: 320px;"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
 
     <!-- Recent Incidents Table -->
     <div class="card shadow-sm border-0 mb-4">
@@ -83,11 +108,13 @@
             <li class="page-item" :class="{ disabled: incidentPage === 1 }">
               <button class="page-link" @click="incidentPage--" :disabled="incidentPage === 1">Previous</button>
             </li>
-            <li class="page-item" v-for="page in totalIncidentPages" :key="page" :class="{ active: page === incidentPage }">
+            <li class="page-item" v-for="page in totalIncidentPages" :key="page"
+              :class="{ active: page === incidentPage }">
               <button class="page-link" @click="incidentPage = page">{{ page }}</button>
             </li>
             <li class="page-item" :class="{ disabled: incidentPage === totalIncidentPages }">
-              <button class="page-link" @click="incidentPage++" :disabled="incidentPage === totalIncidentPages">Next</button>
+              <button class="page-link" @click="incidentPage++"
+                :disabled="incidentPage === totalIncidentPages">Next</button>
             </li>
           </ul>
         </nav>
@@ -126,11 +153,13 @@
                 <li class="page-item" :class="{ disabled: responderPage === 1 }">
                   <button class="page-link" @click="responderPage--" :disabled="responderPage === 1">Previous</button>
                 </li>
-                <li class="page-item" v-for="page in totalResponderPages" :key="page" :class="{ active: page === responderPage }">
+                <li class="page-item" v-for="page in totalResponderPages" :key="page"
+                  :class="{ active: page === responderPage }">
                   <button class="page-link" @click="responderPage = page">{{ page }}</button>
                 </li>
                 <li class="page-item" :class="{ disabled: responderPage === totalResponderPages }">
-                  <button class="page-link" @click="responderPage++" :disabled="responderPage === totalResponderPages">Next</button>
+                  <button class="page-link" @click="responderPage++"
+                    :disabled="responderPage === totalResponderPages">Next</button>
                 </li>
               </ul>
             </nav>
@@ -156,7 +185,8 @@
                 <li class="page-item" :class="{ disabled: notifPage === 1 }">
                   <button class="page-link" @click="notifPage--" :disabled="notifPage === 1">Previous</button>
                 </li>
-                <li class="page-item" v-for="page in totalNotifPages" :key="page" :class="{ active: page === notifPage }">
+                <li class="page-item" v-for="page in totalNotifPages" :key="page"
+                  :class="{ active: page === notifPage }">
                   <button class="page-link" @click="notifPage = page">{{ page }}</button>
                 </li>
                 <li class="page-item" :class="{ disabled: notifPage === totalNotifPages }">
@@ -185,8 +215,11 @@ import {
   PointElement,
   CategoryScale,
   LinearScale,
-  Title
+  Title,
+  Filler
 } from 'chart.js'
+import L from 'leaflet'
+import 'leaflet/dist/leaflet.css'
 
 // Register chart.js components
 Chart.register(
@@ -199,24 +232,30 @@ Chart.register(
   PointElement,
   CategoryScale,
   LinearScale,
-  Title
+  Title,
+  Filler
 )
 
-// === Dashboard Data ===
+// Refs
+const mapContainer = ref(null)
+const priorityChart = ref(null)
+const reportsChart = ref(null)
+
 
 // === Summary Cards ===
 const summaryCards = ref([
-  { title: 'Total Reports', value: 245 },
   { title: 'Pending', value: 37 },
-  { title: 'Resolved', value: 198 },
+  { title: 'Mild', value: 148 },
+  { title: 'Moderate', value: 85 },
   { title: 'Severe', value: 12 },
-  { title: 'Active Responders', value: 8 },
 ])
 
 // === Incident Reports ===
 const recentIncidents = ref([
   { id: 101, reporter: 'John Dela Cruz', type: 'Fire', priority: 'Severe', status: 'Pending', date: '2025-11-01' },
   { id: 102, reporter: 'Maria Reyes', type: 'Flood', priority: 'Moderate', status: 'Resolved', date: '2025-10-30' },
+  { id: 103, reporter: 'Pedro Santos', type: 'Medical', priority: 'Mild', status: 'In Progress', date: '2025-11-05' },
+  { id: 104, reporter: 'Ana Garcia', type: 'Accident', priority: 'Severe', status: 'Pending', date: '2025-11-10' },
 ])
 
 const incidentPage = ref(1)
@@ -231,6 +270,8 @@ const paginatedIncidents = computed(() => {
 const responders = ref([
   { name: 'Officer Santos', role: 'Fire Responder', status: 'Available' },
   { name: 'Staff Lopez', role: 'Medical', status: 'Busy' },
+  { name: 'Officer Cruz', role: 'Police', status: 'En Route' },
+  { name: 'Dr. Reyes', role: 'Medical', status: 'Available' },
 ])
 
 const responderPage = ref(1)
@@ -244,6 +285,8 @@ const paginatedResponders = computed(() => {
 const notifications = ref([
   { message: 'New severe fire reported near Main Building.', time: '2m ago' },
   { message: 'Incident #102 has been resolved by Team B.', time: '15m ago' },
+  { message: 'Medical team dispatched to Gymnasium.', time: '30m ago' },
+  { message: 'Flood warning issued for lower campus.', time: '1h ago' },
 ])
 
 const notifPage = ref(1)
@@ -272,78 +315,137 @@ const responderStatus = (status) => ({
   'bg-warning': status === 'En Route'
 })
 
-// === CHART INITIALIZATION ===
+// === INITIALIZATION ===
 onMounted(() => {
+  // === Initialize Leaflet Map ===
+  if (mapContainer.value) {
+    const map = L.map(mapContainer.value).setView([16.929, 121.769], 15)
+
+    // Add OpenStreetMap tile layer
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      maxZoom: 19,
+      attribution: '© OpenStreetMap contributors'
+    }).addTo(map)
+
+    // Custom marker icons
+    const createIcon = (color) => L.divIcon({
+      html: `<div style="background-color: ${color}; width: 20px; height: 20px; border-radius: 50%; border: 2px solid white;"></div>`,
+      className: '',
+      iconSize: [20, 20]
+    })
+
+    // Add incident markers
+    const incidents = [
+      { lat: 16.929, lng: 121.769, title: 'Fire Incident', desc: 'CCSICT Area', color: '#dc3545' },
+      { lat: 16.930, lng: 121.770, title: 'Flood Report', desc: 'Main Building', color: '#ffc107' },
+      { lat: 16.928, lng: 121.768, title: 'Medical Emergency', desc: 'Gymnasium', color: '#28a745' }
+    ]
+
+    incidents.forEach(incident => {
+      const marker = L.marker([incident.lat, incident.lng], { icon: createIcon(incident.color) }).addTo(map)
+      marker.bindPopup(`<strong>${incident.title}</strong><br>${incident.desc}`)
+    })
+  }
+
   // === Pie Chart (Incident Priority Breakdown) ===
-  const ctxPie = document.getElementById('priorityChart')
-  new Chart(ctxPie, {
-    type: 'pie',
-    data: {
-      labels: ['Severe', 'Moderate', 'Mild'],
-      datasets: [{
-        label: 'Incident Priority',
-        data: [12, 25, 8], // Dummy data
-        backgroundColor: ['#dc3545', '#ffc107', '#28a745'],
-        borderWidth: 1
-      }]
-    },
-    options: {
-      plugins: {
-        legend: { position: 'bottom' },
-        title: { display: true, text: 'Incident Priority Distribution' }
+  if (priorityChart.value) {
+    new Chart(priorityChart.value, {
+      type: 'pie',
+      data: {
+        labels: ['Severe', 'Moderate', 'Mild'],
+        datasets: [{
+          label: 'Incident Priority',
+          data: [12, 85, 148],
+          backgroundColor: ['#dc3545', '#ffc107', '#28a745'],
+          borderWidth: 2,
+          borderColor: '#fff'
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: true,
+        plugins: {
+          legend: {
+            position: 'bottom',
+            labels: {
+              padding: 15,
+              font: { size: 12 }
+            }
+          },
+          title: {
+            display: false
+          }
+        }
       }
-    }
-  })
+    })
+  }
 
   // === Line Chart (Reports Over Time) ===
-  const ctxLine = document.getElementById('reportsChart')
-  new Chart(ctxLine, {
-    type: 'line',
-    data: {
-      labels: ['July', 'August', 'September', 'October', 'November'],
-      datasets: [{
-        label: 'Reports per Month',
-        data: [30, 45, 60, 40, 55], // Dummy data
-        fill: true,
-        backgroundColor: 'rgba(54, 162, 235, 0.2)',
-        borderColor: '#007bff',
-        tension: 0.3
-      }]
-    },
-    options: {
-      responsive: true,
-      scales: {
-        y: {
-          beginAtZero: true,
-          title: { display: true, text: 'Number of Reports' }
-        },
-        x: {
-          title: { display: true, text: 'Month' }
-        }
+  if (reportsChart.value) {
+    new Chart(reportsChart.value, {
+      type: 'line',
+      data: {
+        labels: ['Jul', 'Aug', 'Sep', 'Oct', 'Nov'],
+        datasets: [{
+          label: 'Reports per Month',
+          data: [30, 45, 60, 40, 55],
+          fill: true,
+          backgroundColor: 'rgba(13, 110, 253, 0.1)',
+          borderColor: '#007bff',
+          tension: 0.4,
+          pointRadius: 5,
+          pointHoverRadius: 7,
+          pointBackgroundColor: '#007bff'
+        }]
       },
-      plugins: {
-        legend: { position: 'bottom' }
+      options: {
+        responsive: true,
+        maintainAspectRatio: true,
+        scales: {
+          y: {
+            beginAtZero: true,
+            title: {
+              display: true,
+              text: 'Number of Reports',
+              font: { size: 12 }
+            }
+          },
+          x: {
+            title: {
+              display: true,
+              text: 'Month',
+              font: { size: 12 }
+            }
+          }
+        },
+        plugins: {
+          legend: {
+            position: 'bottom',
+            labels: {
+              padding: 15,
+              font: { size: 12 }
+            }
+          }
+        }
       }
-    }
-  })
+    })
+  }
 })
 </script>
-
 
 <style scoped>
 .card {
   border-radius: 10px;
 }
+
 .badge {
   font-size: 0.8rem;
 }
+
 .page-link {
   cursor: pointer;
 }
-#incidentMap {
-  width: 100%;
-  z-index: 0;
-}
+
 .card-body canvas {
   width: 100% !important;
   height: auto !important;
@@ -351,11 +453,23 @@ onMounted(() => {
   margin: 0 auto;
 }
 
+table td,
+table th {
+  padding: 8px;
+  font-size: 0.9rem;
+}
+
+table td:hover {
+  background-color: #f0f0f0;
+  cursor: pointer;
+}
+
 @media (max-width: 768px) {
-  #priorityChart, #reportsChart {
+
+  #priorityChart,
+  #reportsChart {
     max-width: 250px !important;
     max-height: 180px !important;
   }
 }
-
 </style>

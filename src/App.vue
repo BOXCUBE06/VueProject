@@ -7,7 +7,7 @@
           <router-link to="/" active-class="active" exact>Home (Dashboard)</router-link>
         </li>
         <li>
-          <router-link to="/incidents" active-class="active">Incident Reports</router-link>
+          <router-link to="/incidents" active-class="active">Notifications</router-link>
         </li>
         <li>
           <router-link to="/map" active-class="active">Live Map</router-link>
