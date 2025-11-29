@@ -1,34 +1,22 @@
 <template>
-  <div id="app" class="layout-1">
-    <div class="sidebar">
-      <h2>iAlert Admin</h2>
-      <ul>
-        <li>
-          <router-link to="/" active-class="active" exact>Home (Dashboard)</router-link>
-        </li>
-        <li>
-          <router-link to="/incidents" active-class="active">Notifications</router-link>
-        </li>
-        <li>
-          <router-link to="/map" active-class="active">Live Map</router-link>
-        </li>
-        <li>
-          <router-link to="/users" active-class="active">Users</router-link>
-        </li>
-        <li>
-          <router-link to="/logs" active-class="active">Logs</router-link>
-        </li>
-      </ul>
+    <AdminLayout v-if="useLayout">
+        <RouterView />
+    </AdminLayout>
+    
+    <div v-else>
+        <RouterView />
     </div>
-
-    <div class="main-content">
-      <router-view />
-    </div>
-  </div>
 </template>
 
 <script setup>
-// No need for ref anymore since Vue Router handles navigation
+import { computed } from 'vue';
+import { useRoute } from 'vue-router';
+import AdminLayout from '@/components/layout/AdminLayout.vue';
+
+const route = useRoute();
+
+// Simple logic to disable layout on login page
+const useLayout = computed(() => route.meta.layout !== 'empty');
 </script>
 
 <style scoped>
