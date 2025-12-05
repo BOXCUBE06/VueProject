@@ -6,6 +6,7 @@ import Aura from '@primevue/themes/aura'
 
 // 1. Import PrimeIcons
 import 'primeicons/primeicons.css'
+import ToastService from 'primevue/toastservice';
 
 // 2. Import PrimeFlex (This replaces Tailwind for layout)
 import 'primeflex/primeflex.css'
@@ -23,5 +24,6 @@ app.use(PrimeVue, {
         }
     }
 })
+app.use(ToastService); 
 
-app.mount('#app')
+app.mount('#app');

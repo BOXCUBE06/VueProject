@@ -1,9 +1,9 @@
 <template>
-    <div class="surface-ground px-4 py-5 md:px-6 lg:px-8">
+    <div class="w-full">
         
-        <div class="mb-5">
-            <div class="text-3xl font-medium text-900 mb-2">iAlert Dashboard</div>
-            <div class="text-500">System overview and activity monitoring.</div>
+        <div class="mb-4">
+            <div class="text-2xl font-bold text-900">iAlert Dashboard</div>
+            <div class="text-500 text-sm">System overview and activity monitoring.</div>
         </div>
 
         <div class="grid">
@@ -34,7 +34,7 @@
         <div class="grid mt-2">
             <div class="col-12 lg:col-8">
                 <div class="surface-card shadow-2 border-round p-4 h-30rem flex flex-column">
-                    <div class="text-xl font-medium text-900 mb-3">Live Heatmap</div>
+                    <div class="text-xl font-medium text-900 mb-3">Heatmap</div>
                     <div class="flex-1 border-round overflow-hidden relative">
                          <LiveMap /> 
                     </div>
@@ -91,10 +91,9 @@
 </template>
 
 <script setup>
-/* eslint-disable no-undef */
 import { ref } from 'vue';
 import StatCard from '@/components/dashboard/StatCard.vue';
-import AnalyticsCharts from '@/components/dashboard/AnalyticsCharts.vue'; // IMPORTED
+import AnalyticsCharts from '@/components/dashboard/AnalyticsCharts.vue'; 
 import LiveMap from '@/components/dashboard/LiveMap.vue';
 import ShiftCalendar from '@/components/dashboard/ShiftCalendar.vue';
 import DataTable from 'primevue/datatable';

@@ -2,16 +2,26 @@ import { createRouter, createWebHistory } from 'vue-router'
 import HomePage from '@/views/HomePage.vue'
 
 const routes = [
+  // 1. redirect
   {
     path: '/',
+    redirect: '/login'
+  },
+  
+  {
+    path: '/login',
+    name: 'login',
+    component: () => import('../views/LoginPage.vue'),
+    meta: { layout: 'empty' } // No Sidebar
+  },
+
+  // 3. dashboard)
+  {
+    path: '/dashboard', // Changed from '/' to '/dashboard'
     name: 'home',
     component: HomePage
   },
-  {
-    path: '/incidents',
-    name: 'incidents',
-    component: () => import('../views/IncidentPage.vue')
-  },
+  
   {
     path: '/map',
     name: 'map',
@@ -26,21 +36,29 @@ const routes = [
     path: '/logs',
     name: 'logs',
     component: () => import('../views/LogsPage.vue')
-  },
-  // Added Login Route so you can test the "No Sidebar" layout
-  {
-    path: '/login',
-    name: 'login',
-    component: () => import('../views/LoginPage.vue'),
-    meta: { layout: 'empty' } // This tells App.vue to hide the sidebar
   }
 ]
 
 const router = createRouter({
-  // If you are using Vite, use import.meta.env.BASE_URL
-  // If you are using Webpack/Vue CLI, keep process.env.BASE_URL
   history: createWebHistory(process.env.BASE_URL),
   routes
 })
+
+//  check if user is logged in
+router.beforeEach((to, from, next) => {
+  const publicPages = ['/login'];
+  const authRequired = !publicPages.includes(to.path);
+  const loggedIn = localStorage.getItem('token');
+
+  if (authRequired && !loggedIn) {
+    return next('/login');
+  }
+
+  if (to.path === '/login' && loggedIn) {
+    return next('/dashboard');
+  }
+
+  next();
+});
 
 export default router

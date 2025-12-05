@@ -174,7 +174,6 @@
 </template>
 
 <script setup>
-/* eslint-disable no-undef */
 import { ref, reactive } from 'vue';
 import StatCard from '@/components/dashboard/StatCard.vue';
 import DataTable from 'primevue/datatable';
@@ -183,10 +182,9 @@ import Button from 'primevue/button';
 import InputText from 'primevue/inputtext';
 import Avatar from 'primevue/avatar';
 import Tag from 'primevue/tag';
-import Dialog from 'primevue/dialog';     // NEW
-import Dropdown from 'primevue/dropdown'; // NEW
+import Dialog from 'primevue/dialog';     
+import Dropdown from 'primevue/dropdown'; 
 
-// --- State ---
 const studentSearch = ref('');
 const responderSearch = ref('');
 const selectedStudents = ref([]);
@@ -195,26 +193,25 @@ const totalStudents = ref(1247);
 const totalResponders = ref(42);
 const activeUsers = ref(89);
 
-// --- Dialog State ---
+
 const newUserDialog = ref(false);
 const submitted = ref(false);
 
 const newUser = reactive({
-    type: 'student', // default
+    type: 'student', 
     name: '',
     email: '',
     contact: '',
-    // Student fields
+    // for student fields
     studentId: '',
     department: '',
     yearLevel: '',
-    // Responder fields
+    // for responder fields
     badgeId: '',
     role: '',
     specialization: ''
 });
 
-// --- Options for Dropdowns ---
 const userTypes = [
     { label: 'Student', value: 'student' },
     { label: 'Responder', value: 'responder' }
@@ -224,7 +221,6 @@ const departments = ['CCSICT', 'Engineering', 'Education', 'Business', 'Arts', '
 const yearLevels = ['1st Year', '2nd Year', '3rd Year', '4th Year'];
 const responderRoles = ['Fire Chief', 'Police Officer', 'Medical Officer', 'Nurse', 'Safety Engineer', 'Volunteer'];
 
-// --- Actions ---
 const openNewUserDialog = () => {
     newUser.name = '';
     newUser.email = '';
@@ -247,7 +243,6 @@ const saveUser = () => {
 
         console.log('Saving User:', newUser);
 
-        // Mock: Add to local list to show UI update
         if (newUser.type === 'student') {
             students.value.unshift({
                 id: Math.random(),
@@ -277,12 +272,11 @@ const saveUser = () => {
         }
 
         newUserDialog.value = false;
-        newUser.name = ''; // Reset
+        newUser.name = ''; 
     }
 };
 
 
-// --- Data (Existing) ---
 const students = ref([
   { id: 1, name: 'Maria Santos', email: 'maria.santos@isu.edu', studentId: '2021-0145', department: 'CCSICT', yearLevel: '3rd Year', contact: '+63 912 345 6789', status: 'active', initials: 'MS', color: '#6366f1' },
   { id: 2, name: 'Juan Dela Cruz', email: 'juan.delacruz@isu.edu', studentId: '2020-0234', department: 'Engineering', yearLevel: '4th Year', contact: '+63 923 456 7890', status: 'active', initials: 'JD', color: '#8b5cf6' },
@@ -294,7 +288,6 @@ const responders = ref([
   { id: 2, name: 'Dr. Elena Martinez', email: 'e.martinez@isu.gov', badgeId: 'MD-3287', role: 'Medical Officer', specialization: 'Emergency Medicine', contact: '+63 923 222 3333', status: 'busy', initials: 'EM', color: '#059669' },
 ]);
 
-// --- Helpers ---
 const getResponderSeverity = (status) => {
     if (status === 'available') return 'success';
     if (status === 'busy') return 'danger';

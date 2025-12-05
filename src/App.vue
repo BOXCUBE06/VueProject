@@ -15,7 +15,6 @@ import AdminLayout from '@/components/layout/AdminLayout.vue';
 
 const route = useRoute();
 
-// Simple logic to disable layout on login page
 const useLayout = computed(() => route.meta.layout !== 'empty');
 </script>
 
@@ -26,7 +25,6 @@ const useLayout = computed(() => route.meta.layout !== 'empty');
   font-family: "Segoe UI", sans-serif;
 }
 
-/* Sidebar */
 .sidebar {
   width: 250px;
   background-color: #2c2f33;
@@ -64,16 +62,13 @@ const useLayout = computed(() => route.meta.layout !== 'empty');
   color: #fff;
 }
 
-/* Active route highlight */
 .sidebar a.active {
   background-color: #5865f2;
   color: white;
 }
 
-/* Main content */
 .main-content {
   flex: 1;
-  /* padding: 30px; */
   background-color: #f4f4f4;
   overflow-y: auto;
 }
